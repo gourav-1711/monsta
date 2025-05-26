@@ -7,7 +7,7 @@ import { Facebook, Instagram, Twitter, Linkedin, Youtube, Send, ArrowUp } from "
 export default function Footer() {
   return (
     <>
-      <footer className="border-t border-gray-200 pt-12 pb-6 px-20">
+      <footer className=" pt-12 pb-6 md:px-20">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
             {/* Contact Us Column */}
@@ -228,7 +228,7 @@ export default function Footer() {
             All Rights Reserved By Furniture | © 2025
           </div>
 
-          <div className="w-[40%] md:w-[25%] lg:w-[15%] mx-auto flex justify-center gap-4 mb-6">
+          <div className="w-[60%] md:w-[30%] lg:w-[20%] mx-auto flex justify-center gap-4 mb-6">
             <Image
               src="/HomePageImgs/papyel2.png"
               alt="Visa"
