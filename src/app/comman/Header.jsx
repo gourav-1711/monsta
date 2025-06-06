@@ -19,39 +19,56 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import Link from "next/link";
-
+import { Button } from "@/components/ui/button";
+import { X } from "lucide-react";
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { useDispatch, useSelector } from "react-redux";
+import { totalAmount } from "@/lib/features/cart/cart";
 
 export default function Header() {
-  const [auth, setAuth] = React.useState(false);
+  // Initialize auth state from localStorage if available, otherwise false
+  const [auth, setAuth] = useState(false);
 
   const [header, setHeader] = useState(false);
 
   // window scroll
-
   useEffect(() => {
-    window.addEventListener("scroll", () => {
-      if (window.scrollY > 100) {
-        setHeader(true);
-      } else {
-        setHeader(false);
-      }
-    });
+    const handleScroll = () => {
+      setHeader(window.scrollY > 150);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   console.log(header);
-  
+
+  // get total amount from redux
+  const dispatch = useDispatch();
+
+  // cart items
+  const cartItems = useSelector((state) => state.cart.cartItems);
+  // total price
+  const totalPrice = useSelector((state) => state.cart.totalPrice);
+
+  // wishlist items
+  const wishlistItems = useSelector((state) => state.wishlist.wishlistItems);
+
+  // total amount when cart items change
+  useEffect(() => {
+    dispatch(totalAmount());
+  }, [cartItems]);
 
   return (
     <>
       {/* desktop header 1st */}
       {/* mobile also */}
-      <header className=" max-w-[1100px] mx-auto relative z-[50]   bg-white shadow-sm">
+      <header className=" max-w-[1100px] mx-auto relative z-[50]   bg-white ">
         {/* contact and account details */}
         <div className="hidden lg:block">
           <div className=" flex justify-between items-center py-2 border-b border-gray-200">
@@ -62,13 +79,14 @@ export default function Header() {
             </span>
             <span>
               {/* login and register */}
-              <button
+              <Link
+                href="/login-register"
                 className={`${
                   auth ? "hidden" : "block"
                 } duration-200 hover:text-[#C09578] text-[12px] font-light capitalize`}
               >
                 Login/register
-              </button>
+              </Link>
               {/* dropdown */}
               <div className={`${auth ? "block" : "hidden"} duration-200`}>
                 <DropdownMenu>
@@ -79,7 +97,7 @@ export default function Header() {
                     <DropdownMenuItem>Profile</DropdownMenuItem>
                     <DropdownMenuItem>Billing</DropdownMenuItem>
                     <DropdownMenuItem>Team</DropdownMenuItem>
-                    <DropdownMenuItem>Subscription</DropdownMenuItem>
+                    <DropdownMenuItem>Logout</DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
               </div>
@@ -89,7 +107,7 @@ export default function Header() {
 
         {/* logo and others */}
         {/* mobile responsive part */}
-        <div className=" px-2 lg:px-0  flex justify-between items-center py-4  border-b border-gray-200">
+        <div className=" px-2 lg:px-0 fixed bg-white/90 shadow-md w-full md:shadow-none top-0 z-[9999] lg:static flex justify-between items-center py-4  border-b border-gray-200">
           {/* logo */}
           <div className="flex items-center">
             <Link href={"/"}>
@@ -112,25 +130,36 @@ export default function Header() {
                   className=" placeholder:capitalize outline-none border-0"
                   placeholder="search your product"
                 />
-                <Search className=" text-2xl " name="search" />
+                {/* search icon */}
+                <Link href="/search">
+                  <Search className=" text-2xl " name="search" />
+                </Link>
               </div>
             </div>
 
             <div className="border-[1px] border-[#e0e0e0] flex items-center px-2">
-              <button className="text-[12px] font-light capitalize">
+              <Link
+                href="/wishlist"
+                className="text-[12px] font-light capitalize"
+              >
                 <Heart
                   className=" bg-background hover:text-[#C09578]"
                   size={28}
                   color="#000000"
-                  strokeWidth={0.75}
+                  strokeWidth={wishlistItems.length > 0 ? 0 : 0.75}
                   absoluteStrokeWidth
+                  fill={wishlistItems.length > 0 ? "#C09578" : "#fff"}
                 />
-              </button>
+              </Link>
             </div>
+            {/* cart */}
             <Sheet>
               <SheetTrigger>
-                {" "}
-                <div className=" border-[1px] border-[#e0e0e0] group duration-300 ">
+                <div className="relative border-[1px] border-[#e0e0e0] group duration-300 ">
+                  {/* cart items number */}
+                  <div className="absolute top-[30%] -left-3 bg-[#C09578] text-white text-[10px] font-bold rounded-full size-5 flex items-center justify-center">
+                    {cartItems.length}
+                  </div>
                   <button className="text-[12px] font-bold capitalize flex items-center py-1 gap-2 px-2 ">
                     <ShoppingCart
                       className=" bg-background group-hover:text-[#C09578] border-r pr-1"
@@ -139,9 +168,9 @@ export default function Header() {
                       strokeWidth={0.75}
                       absoluteStrokeWidth
                     />
-                    <span className=" text-[15px] group-hover:text-[#C09578]">
+                    <span className=" text-[15px] group-hover:text-[#C09578] hidden md:block">
                       {/* price here */}
-                      Rs 0.00
+                      Rs {totalPrice}
                     </span>
                     <span>
                       <ChevronDown
@@ -158,10 +187,90 @@ export default function Header() {
               </SheetTrigger>
               <SheetContent>
                 <SheetHeader>
-                  <SheetTitle>Are you absolutely sure?</SheetTitle>
+                  <SheetTitle>Cart</SheetTitle>
                   <SheetDescription>
-                    This action cannot be undone. This will permanently delete
-                    your account and remove your data from our servers.
+                    <div className="">
+                      {cartItems.length > 0 ? (
+                        cartItems.map((item, index) => (
+                          <div className="flex-1 p-6" key={index}>
+                            <div className="flex gap-4 pb-6 border-b border-gray-100">
+                              {/* Product Image */}
+                              <div className="w-20 h-20 flex-shrink-0">
+                                <Image
+                                  src={item.image}
+                                  alt="Hrithvik Stool"
+                                  width={80}
+                                  height={80}
+                                  className="w-full h-full object-cover rounded"
+                                />
+                              </div>
+
+                              {/* Product Details */}
+                              <div className="flex-1">
+                                <div className="flex items-start justify-between">
+                                  <div>
+                                    <h3 className="font-medium text-gray-800 mb-1">
+                                      {item.title}
+                                    </h3>
+                                    <p className="text-sm text-gray-600 mb-2">
+                                      Qty: {item.quantity}
+                                    </p>
+                                    <p
+                                      className="text-lg font-medium"
+                                      style={{ color: "#B8956A" }}
+                                    >
+                                      Rs. {item.price}
+                                    </p>
+                                  </div>
+                                  <button className="p-1">
+                                    <X className="w-5 h-5 text-gray-400" />
+                                  </button>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        ))
+                      ) : (
+                        <div>
+                          <Image
+                            src="/HomePageImgs/my-Order.png"
+                            alt="No items in cart"
+                            width={100}
+                            height={100}
+                            className="w-full h-full object-cover"
+                          />
+                          <p className="text-center text-gray-500 font-semibold text-lg text">
+                            No items in cart
+                          </p>
+                        </div>
+                      )}
+
+                      {/* Subtotal */}
+                      <div className="flex items-center justify-between py-6">
+                        <span className="text-md font-medium text-gray-800">
+                          Subtotal:
+                        </span>
+                        <span className="text-md font-medium text-gray-800">
+                          Rs. {totalPrice}
+                        </span>
+                      </div>
+
+                      {/* Action Buttons */}
+                      <div className="p-6 bg-black space-y-3">
+                        <Button
+                          className="w-full bg-transparent border-white hover:border-[#B8956A] text-white hover:bg-[#B8956A] hover:text-gray-900"
+                          variant={"outline"}
+                        >
+                          <Link href={"/cart"}>VIEW CART</Link>
+                        </Button>
+                        <Button
+                          className="w-full text-white hover:opacity-90"
+                          style={{ backgroundColor: "#B8956A" }}
+                        >
+                          <Link href={"/checkout"}>CHECKOUT</Link>
+                        </Button>
+                      </div>
+                    </div>
                   </SheetDescription>
                 </SheetHeader>
               </SheetContent>
@@ -237,360 +346,32 @@ export default function Header() {
         </div>
 
         {/* navigation menu */}
-        <nav className="hidden md:flex justify-center space-x-8 py-4 z-50"> 
-          <Link
-            href=""
-            className="text-[14px] font-semibold text-gray-700 hover:text-[#C09578]"
-          >
-            Home
-          </Link>
-          <Link
-            href=""
-            className=" relative group flex capitalize text-[14px] font-semibold text-gray-700 hover:text-[#C09578]"
-          >
-            {/* nav item */}
-            <span> living </span>
-            <span>
-              <ChevronDown
-                size={16}
-                className="inline-block ml-1"
-                strokeWidth={0.75}
-                absoluteStrokeWidth
-              />
-            </span>
-            {/* nav dropdown */}
-            <div
-              className="dropdown [transform:_perspective(600px)_rotateX(-90deg)] duration-500 skew-x-2 origin-top group-hover:[transform:_perspective(600px)_rotateX(0deg)] 
-             absolute left-0 top-full mt-2 w-[600px] bg-white shadow-lg rounded-md py-8 px-4 "
-            >
-              {/* dropdown content */}
-              <div className=" grid grid-cols-3 justify-evenly">
-                <div aria-label="drop-col-1">
-                  <div>
-                    <h1 className=" font-bold text-[18px] text-foreground py-3 ">
-                      Table
-                    </h1>
-                  </div>
-
-                  <ul className="space-y-4">
-                    <li>
-                      <p className="block text-gray-500 hover:text-[#C09578] text-xs">
-                        Side and End Tables
-                      </p>
-                    </li>
-                    <li>
-                      <p className="block text-gray-500 hover:text-[#C09578] text-xs">
-                        Nest Of Tables
-                      </p>
-                    </li>
-                    <li>
-                      <p className="block text-gray-500 hover:text-[#C09578] text-xs">
-                        Console Table
-                      </p>
-                    </li>
-                    <li>
-                      <p className="block text-gray-500 hover:text-[#C09578] text-xs">
-                        Coffee Table Sets
-                      </p>
-                    </li>
-                    <li>
-                      <p className="block text-gray-500 hover:text-[#C09578] text-xs">
-                        Coffee Tables
-                      </p>
-                    </li>
-                  </ul>
-                </div>
-                <div aria-label="drop-col-2">
-                  <div>
-                    <h1 className=" font-bold text-[18px] text-foreground py-3 ">
-                      Table
-                    </h1>
-                  </div>
-
-                  <ul className="space-y-4">
-                    <li>
-                      <p className="block text-gray-500 hover:text-[#C09578] text-xs">
-                        Side and End Tables
-                      </p>
-                    </li>
-                    <li>
-                      <p className="block text-gray-500 hover:text-[#C09578] text-xs">
-                        Nest Of Tables
-                      </p>
-                    </li>
-                    <li>
-                      <p className="block text-gray-500 hover:text-[#C09578] text-xs">
-                        Console Table
-                      </p>
-                    </li>
-                    <li>
-                      <p className="block text-gray-500 hover:text-[#C09578] text-xs">
-                        Coffee Table Sets
-                      </p>
-                    </li>
-                    <li>
-                      <p className="block text-gray-500 hover:text-[#C09578] text-xs">
-                        Coffee Tables
-                      </p>
-                    </li>
-                  </ul>
-                </div>
-                <div aria-label="drop-col-3">
-                  <div>
-                    <h1 className=" font-bold text-[18px] text-foreground py-3 ">
-                      Table
-                    </h1>
-                  </div>
-
-                  <ul className="space-y-4">
-                    <li>
-                      <p className="block text-gray-500 hover:text-[#C09578] text-xs">
-                        Side and End Tables
-                      </p>
-                    </li>
-                    <li>
-                      <p className="block text-gray-500 hover:text-[#C09578] text-xs">
-                        Nest Of Tables
-                      </p>
-                    </li>
-                    <li>
-                      <p className="block text-gray-500 hover:text-[#C09578] text-xs">
-                        Console Table
-                      </p>
-                    </li>
-                    <li>
-                      <p className="block text-gray-500 hover:text-[#C09578] text-xs">
-                        Coffee Table Sets
-                      </p>
-                    </li>
-                    <li>
-                      <p className="block text-gray-500 hover:text-[#C09578] text-xs">
-                        Coffee Tables
-                      </p>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-          </Link>
-          <Link
-            href=""
-            className="group relative flex items-center  capitalize text-[14px] font-semibold text-gray-700 hover:text-[#C09578]"
-          >
-            <span>sofa</span>
-            <span>
-              <ChevronDown
-                size={16}
-                // color="#000000"
-                strokeWidth={0.75}
-                absoluteStrokeWidth
-                className=" bg-background group-hover:text-[#C09578]"
-              />
-            </span>
-            {/* nav dropdown */}
-            <div
-              className="dropdown [transform:_perspective(600px)_rotateX(-90deg)] duration-500 skew-x-2 origin-top group-hover:[transform:_perspective(600px)_rotateX(0deg)] 
-             absolute left-0 top-full mt-2 w-[600px] bg-white shadow-lg rounded-md py-8 px-4 "
-            >
-              {/* dropdown content */}
-              <div className=" grid grid-cols-3 justify-evenly">
-                <div aria-label="drop-col-1">
-                  <div>
-                    <h1 className=" font-bold text-[18px] text-foreground py-3 ">
-                      Table
-                    </h1>
-                  </div>
-
-                  <ul className="space-y-4">
-                    <li>
-                      <p className="block text-gray-500 hover:text-[#C09578] text-xs">
-                        Side and End Tables
-                      </p>
-                    </li>
-                    <li>
-                      <p className="block text-gray-500 hover:text-[#C09578] text-xs">
-                        Nest Of Tables
-                      </p>
-                    </li>
-                    <li>
-                      <p className="block text-gray-500 hover:text-[#C09578] text-xs">
-                        Console Table
-                      </p>
-                    </li>
-                    <li>
-                      <p className="block text-gray-500 hover:text-[#C09578] text-xs">
-                        Coffee Table Sets
-                      </p>
-                    </li>
-                    <li>
-                      <p className="block text-gray-500 hover:text-[#C09578] text-xs">
-                        Coffee Tables
-                      </p>
-                    </li>
-                  </ul>
-                </div>
-                <div aria-label="drop-col-2">
-                  <div>
-                    <h1 className=" font-bold text-[18px] text-foreground py-3 ">
-                      Table
-                    </h1>
-                  </div>
-
-                  <ul className="space-y-4">
-                    <li>
-                      <p className="block text-gray-500 hover:text-[#C09578] text-xs">
-                        Side and End Tables
-                      </p>
-                    </li>
-                    <li>
-                      <p className="block text-gray-500 hover:text-[#C09578] text-xs">
-                        Nest Of Tables
-                      </p>
-                    </li>
-                    <li>
-                      <p className="block text-gray-500 hover:text-[#C09578] text-xs">
-                        Console Table
-                      </p>
-                    </li>
-                    <li>
-                      <p className="block text-gray-500 hover:text-[#C09578] text-xs">
-                        Coffee Table Sets
-                      </p>
-                    </li>
-                    <li>
-                      <p className="block text-gray-500 hover:text-[#C09578] text-xs">
-                        Coffee Tables
-                      </p>
-                    </li>
-                  </ul>
-                </div>
-                <div aria-label="drop-col-3">
-                  <div>
-                    <h1 className=" font-bold text-[18px] text-foreground py-3 ">
-                      Table
-                    </h1>
-                  </div>
-
-                  <ul className="space-y-4">
-                    <li>
-                      <p className="block text-gray-500 hover:text-[#C09578] text-xs">
-                        Side and End Tables
-                      </p>
-                    </li>
-                    <li>
-                      <p className="block text-gray-500 hover:text-[#C09578] text-xs">
-                        Nest Of Tables
-                      </p>
-                    </li>
-                    <li>
-                      <p className="block text-gray-500 hover:text-[#C09578] text-xs">
-                        Console Table
-                      </p>
-                    </li>
-                    <li>
-                      <p className="block text-gray-500 hover:text-[#C09578] text-xs">
-                        Coffee Table Sets
-                      </p>
-                    </li>
-                    <li>
-                      <p className="block text-gray-500 hover:text-[#C09578] text-xs">
-                        Coffee Tables
-                      </p>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-          </Link>
-          <Link
-            href=""
-            className="group relative flex items-center  capitalize text-[14px] font-semibold text-gray-700 hover:text-[#C09578]"
-          >
-            <span>pages</span>
-            <span>
-              <ChevronDown
-                size={16}
-                // color="#000000"
-                strokeWidth={0.75}
-                absoluteStrokeWidth
-                className=" bg-background group-hover:text-[#C09578]"
-              />
-            </span>
-            {/* nav dropdown */}
-            <div
-              className="dropdown [transform:_perspective(600px)_rotateX(-90deg)] duration-500 skew-x-2 origin-top group-hover:[transform:_perspective(600px)_rotateX(0deg)] 
-             absolute left-0 top-full mt-2 w-[200px] bg-white shadow-lg rounded-md py-8 px-4 "
-            >
-              {/* dropdown content */}
-              <div className=" grid grid-cols-1 justify-evenly">
-                <div aria-label="drop-col-1">
-                  <div>
-                    <h1 className=" font-bold text-[18px] text-foreground py-3 ">
-                      Table
-                    </h1>
-                  </div>
-
-                  <ul className="space-y-4">
-                    <li>
-                      <p className="block text-gray-500 hover:text-[#C09578] text-xs">
-                        Side and End Tables
-                      </p>
-                    </li>
-                    <li>
-                      <p className="block text-gray-500 hover:text-[#C09578] text-xs">
-                        Nest Of Tables
-                      </p>
-                    </li>
-                    <li>
-                      <p className="block text-gray-500 hover:text-[#C09578] text-xs">
-                        Console Table
-                      </p>
-                    </li>
-                    <li>
-                      <p className="block text-gray-500 hover:text-[#C09578] text-xs">
-                        Coffee Table Sets
-                      </p>
-                    </li>
-                    <li>
-                      <p className="block text-gray-500 hover:text-[#C09578] text-xs">
-                        Coffee Tables
-                      </p>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-          </Link>
-          <Link
-            href=""
-            className="text-[14px] flex items-center  capitalize font-semibold text-gray-700 hover:text-[#C09578]"
-          >
-            <span>contact us</span>
-          </Link>
-        </nav>
-      </header>
-
-      {/* desktop header 2nd visible on scroll */}
-      <header
-        className={` hidden lg:block   sticky top-0  z-[999] text-white`}
-      >
-        <nav className={`${header ? "block animate-slideIn slideIn" : "hidden"}  bg-[#ffffffb5] shadow-md w-full  p-4 flex justify-center space-x-8 py-4`}>
-          <Link href={"/"}>
+        {/* visible on scroll */}
+        <nav
+          className={`${
+            header
+              ? "fixed top-0 left-0 animate-slideIn slideIn z-[9999] bg-white/90 shadow-md "
+              : "z-[50] "
+          } hidden md:flex justify-center space-x-8 py-4 max-w-[100%] w-full`}
+        >
+          {/* logo */}
+          <Link href="/" className="flex items-center">
             <Image
-              src={
-                "/HomePageImgs/cccfbdab-3bec-439f-88b9-5694698cd302-1670132652.png"
-              }
-              width={100}
-              height={100}
+              src="/HomePageImgs/cccfbdab-3bec-439f-88b9-5694698cd302-1670132652.png"
               alt="logo"
+              width={80}
+              height={80}
+              className={`${header ? "block" : "hidden"}`}
             />
           </Link>
+          {/* home */}
           <Link
-            href=""
+            href="/"
             className="text-[14px] font-semibold text-gray-700 hover:text-[#C09578]"
           >
             Home
           </Link>
+          {/* living */}
           <Link
             href=""
             className=" relative group flex capitalize text-[14px] font-semibold text-gray-700 hover:text-[#C09578]"
@@ -600,7 +381,7 @@ export default function Header() {
             <span>
               <ChevronDown
                 size={16}
-                className="inline-block ml-1"
+                className="inline-block ml-1 bg-transparent"
                 strokeWidth={0.75}
                 absoluteStrokeWidth
               />
@@ -621,29 +402,39 @@ export default function Header() {
 
                   <ul className="space-y-4">
                     <li>
-                      <p className="block text-gray-500 hover:text-[#C09578] text-xs">
-                        Side and End Tables
-                      </p>
+                      <Link href="/categories/living/side-and-end-tables">
+                        <p className="block text-gray-500 hover:text-[#C09578] text-xs">
+                          Side and End Tables
+                        </p>
+                      </Link>
                     </li>
                     <li>
-                      <p className="block text-gray-500 hover:text-[#C09578] text-xs">
-                        Nest Of Tables
-                      </p>
+                      <Link href="/categories/living/nest-of-tables">
+                        <p className="block text-gray-500 hover:text-[#C09578] text-xs">
+                          Nest Of Tables
+                        </p>
+                      </Link>
                     </li>
                     <li>
-                      <p className="block text-gray-500 hover:text-[#C09578] text-xs">
-                        Console Table
-                      </p>
+                      <Link href="/categories/living/console-table">
+                        <p className="block text-gray-500 hover:text-[#C09578] text-xs">
+                          Console Table
+                        </p>
+                      </Link>
                     </li>
                     <li>
-                      <p className="block text-gray-500 hover:text-[#C09578] text-xs">
-                        Coffee Table Sets
-                      </p>
+                      <Link href="/categories/living/coffee-table-sets">
+                        <p className="block text-gray-500 hover:text-[#C09578] text-xs">
+                          Coffee Table Sets
+                        </p>
+                      </Link>
                     </li>
                     <li>
-                      <p className="block text-gray-500 hover:text-[#C09578] text-xs">
-                        Coffee Tables
-                      </p>
+                      <Link href="/categories/living/coffee-tables">
+                        <p className="block text-gray-500 hover:text-[#C09578] text-xs">
+                          Coffee Tables
+                        </p>
+                      </Link>
                     </li>
                   </ul>
                 </div>
@@ -656,29 +447,39 @@ export default function Header() {
 
                   <ul className="space-y-4">
                     <li>
-                      <p className="block text-gray-500 hover:text-[#C09578] text-xs">
-                        Side and End Tables
-                      </p>
+                      <Link href="/categories/living/side-and-end-tables">
+                        <p className="block text-gray-500 hover:text-[#C09578] text-xs">
+                          Side and End Tables
+                        </p>
+                      </Link>
                     </li>
                     <li>
-                      <p className="block text-gray-500 hover:text-[#C09578] text-xs">
-                        Nest Of Tables
-                      </p>
+                      <Link href="/categories/living/nest-of-tables">
+                        <p className="block text-gray-500 hover:text-[#C09578] text-xs">
+                          Nest Of Tables
+                        </p>
+                      </Link>
                     </li>
                     <li>
-                      <p className="block text-gray-500 hover:text-[#C09578] text-xs">
-                        Console Table
-                      </p>
+                      <Link href="/categories/living/console-table">
+                        <p className="block text-gray-500 hover:text-[#C09578] text-xs">
+                          Console Table
+                        </p>
+                      </Link>
                     </li>
                     <li>
-                      <p className="block text-gray-500 hover:text-[#C09578] text-xs">
-                        Coffee Table Sets
-                      </p>
+                      <Link href="/categories/living/coffee-table-sets">
+                        <p className="block text-gray-500 hover:text-[#C09578] text-xs">
+                          Coffee Table Sets
+                        </p>
+                      </Link>
                     </li>
                     <li>
-                      <p className="block text-gray-500 hover:text-[#C09578] text-xs">
-                        Coffee Tables
-                      </p>
+                      <Link href="/categories/living/coffee-tables">
+                        <p className="block text-gray-500 hover:text-[#C09578] text-xs">
+                          Coffee Tables
+                        </p>
+                      </Link>
                     </li>
                   </ul>
                 </div>
@@ -691,35 +492,46 @@ export default function Header() {
 
                   <ul className="space-y-4">
                     <li>
-                      <p className="block text-gray-500 hover:text-[#C09578] text-xs">
-                        Side and End Tables
-                      </p>
+                      <Link href="/categories/living/side-and-end-tables">
+                        <p className="block text-gray-500 hover:text-[#C09578] text-xs">
+                          Side and End Tables
+                        </p>
+                      </Link>
                     </li>
                     <li>
-                      <p className="block text-gray-500 hover:text-[#C09578] text-xs">
-                        Nest Of Tables
-                      </p>
+                      <Link href="/categories/living/nest-of-tables">
+                        <p className="block text-gray-500 hover:text-[#C09578] text-xs">
+                          Nest Of Tables
+                        </p>
+                      </Link>
                     </li>
                     <li>
-                      <p className="block text-gray-500 hover:text-[#C09578] text-xs">
-                        Console Table
-                      </p>
+                      <Link href="/categories/living/console-table">
+                        <p className="block text-gray-500 hover:text-[#C09578] text-xs">
+                          Console Table
+                        </p>
+                      </Link>
                     </li>
                     <li>
-                      <p className="block text-gray-500 hover:text-[#C09578] text-xs">
-                        Coffee Table Sets
-                      </p>
+                      <Link href="/categories/living/coffee-table-sets">
+                        <p className="block text-gray-500 hover:text-[#C09578] text-xs">
+                          Coffee Table Sets
+                        </p>
+                      </Link>
                     </li>
                     <li>
-                      <p className="block text-gray-500 hover:text-[#C09578] text-xs">
-                        Coffee Tables
-                      </p>
+                      <Link href="/categories/living/coffee-tables">
+                        <p className="block text-gray-500 hover:text-[#C09578] text-xs">
+                          Coffee Tables
+                        </p>
+                      </Link>
                     </li>
                   </ul>
                 </div>
               </div>
             </div>
           </Link>
+          {/* sofa */}
           <Link
             href=""
             className="group relative flex items-center  capitalize text-[14px] font-semibold text-gray-700 hover:text-[#C09578]"
@@ -731,7 +543,7 @@ export default function Header() {
                 // color="#000000"
                 strokeWidth={0.75}
                 absoluteStrokeWidth
-                className="  group-hover:text-[#C09578]"
+                className=" bg-transparent group-hover:text-[#C09578]"
               />
             </span>
             {/* nav dropdown */}
@@ -849,6 +661,7 @@ export default function Header() {
               </div>
             </div>
           </Link>
+          {/* pages */}
           <Link
             href=""
             className="group relative flex items-center  capitalize text-[14px] font-semibold text-gray-700 hover:text-[#C09578]"
@@ -860,7 +673,7 @@ export default function Header() {
                 // color="#000000"
                 strokeWidth={0.75}
                 absoluteStrokeWidth
-                className=" group-hover:text-[#C09578]"
+                className=" bg-transparent group-hover:text-[#C09578]"
               />
             </span>
             {/* nav dropdown */}
@@ -871,51 +684,51 @@ export default function Header() {
               {/* dropdown content */}
               <div className=" grid grid-cols-1 justify-evenly">
                 <div aria-label="drop-col-1">
-                  <div>
-                    <h1 className=" font-bold text-[18px] text-foreground py-3 ">
-                      Table
-                    </h1>
-                  </div>
-
-                  <ul className="space-y-4">
+                  <ul className="space-y-4 font-normal">
                     <li>
-                      <p className="block text-gray-500 hover:text-[#C09578] text-xs">
-                        Side and End Tables
-                      </p>
+                      <Link href="/about-us">
+                        <p className="block text-gray-500 hover:text-[#C09578] text-[13px]">
+                          About Us
+                        </p>
+                      </Link>
                     </li>
                     <li>
-                      <p className="block text-gray-500 hover:text-[#C09578] text-xs">
-                        Nest Of Tables
-                      </p>
+                      <Link className="my-2" href="/cart">
+                        <p className="block text-gray-500 hover:text-[#C09578] text-[13px]">
+                          Cart
+                        </p>
+                      </Link>
                     </li>
                     <li>
-                      <p className="block text-gray-500 hover:text-[#C09578] text-xs">
-                        Console Table
-                      </p>
+                      <Link className="my-2" href="/checkout">
+                        <p className="block text-gray-500 hover:text-[#C09578] text-[13px]">
+                          Checkout
+                        </p>
+                      </Link>
                     </li>
                     <li>
-                      <p className="block text-gray-500 hover:text-[#C09578] text-xs">
-                        Coffee Table Sets
-                      </p>
-                    </li>
-                    <li>
-                      <p className="block text-gray-500 hover:text-[#C09578] text-xs">
-                        Coffee Tables
-                      </p>
+                      <Link className="my-2" href="/frequently-questions">
+                        <p className="block text-gray-500 hover:text-[#C09578] text-[13px]">
+                          Frequently Asked Questions
+                        </p>
+                      </Link>
                     </li>
                   </ul>
                 </div>
               </div>
             </div>
           </Link>
+          {/* contact us */}
           <Link
-            href=""
+            href="/contact-us"
             className="text-[14px] flex items-center  capitalize font-semibold text-gray-700 hover:text-[#C09578]"
           >
             <span>contact us</span>
           </Link>
         </nav>
       </header>
+
+   
     </>
   );
 }

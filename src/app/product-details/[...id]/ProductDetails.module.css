@@ -1,0 +1,110 @@
+.product-thumbs-slider :global(img) {
+  user-select: none;
+}
+
+.product-thumbs-slider {
+  padding: 0 35px;
+  margin-top: 15px;
+  width: 100%;
+}
+
+/* Zoom Container Styles */
+.zoomContainer {
+  width: 100%;
+  padding-top: 55%; /* 1:1 Aspect Ratio */
+  position: relative;
+  background-color: white;
+}
+
+.imageWrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  cursor: zoom-in;
+  overflow: hidden;
+}
+
+.baseImage {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.zoomLayer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transition: opacity 0.2s;
+  background-repeat: no-repeat;
+  pointer-events: none;
+}
+
+.active {
+  opacity: 1;
+}
+
+/* Swiper styles */
+.product-thumbs-slider :global(.swiper-wrapper) {
+  display: flex;
+  align-items: center;
+}
+
+.product-thumbs-slider :global(.swiper-slide) {
+  opacity: 0.4;
+  transition: opacity 0.3s;
+  width: auto !important;
+}
+
+.product-thumbs-slider :global(.swiper-slide-visible) {
+  opacity: 1;
+}
+
+.product-thumbs-slider :global(.swiper-button-next),
+.product-thumbs-slider :global(.swiper-button-prev) {
+  color: rgb(192,149,120);
+  width: 30px;
+  height: 30px;
+  top: 70%;
+  transform: translateY(-50%);
+  background: white;
+  border-radius: 50%;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  z-index: 10;
+}
+
+.product-thumbs-slider :global(.swiper-button-prev) {
+  left: 0;
+}
+
+.product-thumbs-slider :global(.swiper-button-next) {
+  right: 0;
+}
+
+.product-thumbs-slider :global(.swiper-button-next:after),
+.product-thumbs-slider :global(.swiper-button-prev:after) {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.product-thumbs-slider :global(.swiper-button-next:hover),
+.product-thumbs-slider :global(.swiper-button-prev:hover) {
+  color: black;
+}
+
+.product-thumbs-slider :global(.swiper-slide) img {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: border-color 0.3s;
+}
+
+.product-thumbs-slider :global(.swiper-slide-thumb-active) img {
+  border-color: rgb(192,149,120);
+} 

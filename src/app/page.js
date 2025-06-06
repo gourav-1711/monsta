@@ -5,20 +5,18 @@ import Image from "next/image";
 import Footer from "./comman/Footer";
 import ScrollTop from "./comman/ScrollTop";
 import Header from "./comman/Header";
-import Slider from "./comman/Slider";
+import Slider from "./comman/Home/Slider";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Check, Clock, Earth, Heart, RotateCcw, Truck } from "lucide-react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/pagination";
-import Slider2 from "./comman/Slider2";
-import Slider3 from "./comman/Slider3";
-
+import Slider2 from "./comman/Home/Slider2";
+import Slider3 from "./comman/Home/Slider3";
+import BestSelling from "./comman/BestSelling";
 export default function Home() {
   return (
     <>
-      {/* header */}
-      <Header />
       {/* slider */}
       <Slider />
 
@@ -188,18 +186,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* best selling products */}
-      <section className="px-4 py-12 max-w-[1100px] mx-auto ">
-        {/* title */}
-        <div className="relative">
-          <h1 className="text-2xl font-bold capitalize bg-white z-[15] w-fit">
-            best selling products
-          </h1>
-          <div className=" absolute top-[25%] left-0 z-[-1] right-0 border-b-2 ms-6 w-[90%] flex justify-end border-gray-200 py-1"></div>
-        </div>
-        {/* slider here */}
-        <Slider2 />
-      </section>
+      <BestSelling heading={"best selling products"} />
 
       {/* featured section */}
       <section className="px-4 py-4 max-w-[100%] bg-gray-50 mx-auto my-10">
@@ -243,34 +230,35 @@ export default function Home() {
         </div>
       </section>
 
-
       {/* review section */}
       <Slider3 />
-
 
       {/* newsletter  */}
 
       <section className="px-4 py-12 max-w-[100%] mx-auto bg-gray-50">
         <div className="text-center max-w-[1100px] mx-auto">
-          <div className=' bg-[rgb(248,249,249)] '>
-                <div className='max-w-[1050px] mx-auto  text-center' >
-
-                    <h1 className='text-[22px] font-semibold font-serif'>Our Newsletter</h1>
-                    <p className='text-[rgb(90,90,90)] mt-[5px]'>Get E-mail updates about our latest shop and special offers.</p>
-                    <div className='flex justify-center mt-[20px] mx-auto max-w-[60%]'>
-                        <input type="text" placeholder='Email Address.....' className='border p-[7px_15px] rounded-[5px_0px_0px_5px] max-w-[70%] outline-none'/>
-                        <button className=' border p-[5px_50px] rounded-[0px_5px_5px_0px]  border-[rgb(192,149,120)] bg-[rgb(192,149,120)] text-white font-semibold cursor-pointer text-[14px] hover:text-white duration-150 hover:bg-black max-w-[30%]'>Subscribe</button>
-                    </div>
-                </div>
+          <div className=" bg-[rgb(248,249,249)] ">
+            <div className="max-w-[1050px] mx-auto  text-center">
+              <h1 className="text-[22px] font-semibold font-serif">
+                Our Newsletter
+              </h1>
+              <p className="text-[rgb(90,90,90)] mt-[5px]">
+                Get E-mail updates about our latest shop and special offers.
+              </p>
+              <div className="flex justify-center mt-[20px] mx-auto max-w-[60%]">
+                <input
+                  type="text"
+                  placeholder="Email Address....."
+                  className="border p-[7px_15px] rounded-[5px_0px_0px_5px] max-w-[70%] outline-none"
+                />
+                <button className=" border p-[5px_50px] rounded-[0px_5px_5px_0px]  border-[rgb(192,149,120)] bg-[rgb(192,149,120)] text-white font-semibold cursor-pointer text-[14px] hover:text-white duration-150 hover:bg-black max-w-[30%]">
+                  Subscribe
+                </button>
+              </div>
             </div>
+          </div>
         </div>
       </section>
-
-      {/* scroll to top */}
-      <ScrollTop />
-
-      {/* footer */}
-      <Footer />
     </>
   );
 }
