@@ -14,7 +14,7 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body>
+      <body className="no-scroll-arrows overflow-y-scroll">
         <ReduxProvider>
           <Header />
           <Toaster />

@@ -12,7 +12,7 @@ import Slider3 from "../comman/Home/Slider3";
 export default function page() {
   return (
     <>
-      <div className="max-w-[1100px] w-[70%] md:w-[80%] lg:w-[100%] mx-auto">
+      <div className="max-w-[1100px] w-[95%] md:w-[85%] lg:w-[100%] mx-auto">
         {/* Breadcrumb */}
         <div className="mt-[15px]  p-[35px_0px] border-t border-t-gray-200 border-b border-gray-200 text-center">
           <h1 className="text-[32px] font-bold mb-[5px] font-serif text">

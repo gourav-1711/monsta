@@ -232,7 +232,7 @@ const CartItem = ({ image, title, price, quantity, total, id, oldPrice }) => {
         <DialogContent className="sm:max-w-[700px]">
           <div className="flex flex-col items-center gap-6 py-4">
             <Image
-              src="/HomePageImgs/my-Order.png"
+              src="/HomePageImgs/cccfbdab-3bec-439f-88b9-5694698cd302-1670132652.png"
               alt="Monsta Logo"
               width={200}
               height={80}
@@ -243,7 +243,7 @@ const CartItem = ({ image, title, price, quantity, total, id, oldPrice }) => {
             </h2>
             <div className="flex gap-4">
               <Button
-                className="bg-[#C69B7B] hover:bg-[#b38a6d] px-8"
+                className="bg-[#C69B7B] text-white hover:bg-[#b38a6d] px-8"
                 onClick={() => {
                   dispatch(removeFromCart({ id: id }));
                   setOpen(false);
@@ -257,7 +257,7 @@ const CartItem = ({ image, title, price, quantity, total, id, oldPrice }) => {
                   setOpen(false);
                 }}
                 variant="secondary"
-                className="bg-[#C69B7B] hover:bg-[#b38a6d] px-8"
+                className="bg-[#C69B7B] text-white hover:bg-[#b38a6d] px-8"
               >
                 NO
               </Button>

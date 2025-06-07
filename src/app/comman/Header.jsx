@@ -29,12 +29,22 @@ import {
 } from "@/components/ui/accordion";
 import { useDispatch, useSelector } from "react-redux";
 import { totalAmount } from "@/lib/features/cart/cart";
+import { usePathname } from "next/navigation";
 
 export default function Header() {
   // Initialize auth state from localStorage if available, otherwise false
-  const [auth, setAuth] = useState(false);
+  const [auth, setAuth] = useState(true);
 
+  // header scroll
   const [header, setHeader] = useState(false);
+
+  // for sheets pages
+  const [open1, setOpen1] = useState(false)
+  // for cart sheet
+  const [open2, setOpen2] = useState(false)
+
+  // navigation
+  const navigation = usePathname()
 
   // window scroll
   useEffect(() => {
@@ -45,8 +55,6 @@ export default function Header() {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
-
-  console.log(header);
 
   // get total amount from redux
   const dispatch = useDispatch();
@@ -63,6 +71,12 @@ export default function Header() {
   useEffect(() => {
     dispatch(totalAmount());
   }, [cartItems]);
+
+  // close sheets when navigation changes to other pages
+  useEffect(() => {
+    setOpen1(false)
+    setOpen2(false)
+  }, [navigation])
 
   return (
     <>
@@ -90,14 +104,13 @@ export default function Header() {
               {/* dropdown */}
               <div className={`${auth ? "block" : "hidden"} duration-200`}>
                 <DropdownMenu>
-                  <DropdownMenuTrigger>Open</DropdownMenuTrigger>
-                  <DropdownMenuContent>
-                    <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                  <DropdownMenuTrigger className=" flex items-center gap-2 text-sm hover:text-[#C09578]">My Account <ChevronDown className=" hover:text-[#C09578]" size={16} /></DropdownMenuTrigger>
+                  <DropdownMenuContent className=" bg-white shadow-md rounded-md w-40">
+                    <DropdownMenuItem>
+                      <Link href="/my-dashboard">My Dashboard</Link>
+                    </DropdownMenuItem>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem>Profile</DropdownMenuItem>
-                    <DropdownMenuItem>Billing</DropdownMenuItem>
-                    <DropdownMenuItem>Team</DropdownMenuItem>
-                    <DropdownMenuItem>Logout</DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => setAuth(false)}>Logout</DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
               </div>
@@ -107,7 +120,7 @@ export default function Header() {
 
         {/* logo and others */}
         {/* mobile responsive part */}
-        <div className=" px-2 lg:px-0 fixed bg-white/90 shadow-md w-full md:shadow-none top-0 z-[9999] lg:static flex justify-between items-center py-4  border-b border-gray-200">
+        <div className=" px-2 lg:px-0 sticky bg-white/90 shadow-md w-full md:shadow-none top-0 z-[9999] lg:static flex justify-between items-center py-4  border-b border-gray-200">
           {/* logo */}
           <div className="flex items-center">
             <Link href={"/"}>
@@ -153,7 +166,7 @@ export default function Header() {
               </Link>
             </div>
             {/* cart */}
-            <Sheet>
+            <Sheet open={open2} onOpenChange={setOpen2} className=" w-full">
               <SheetTrigger>
                 <div className="relative border-[1px] border-[#e0e0e0] group duration-300 ">
                   {/* cart items number */}
@@ -185,7 +198,7 @@ export default function Header() {
                   </button>
                 </div>
               </SheetTrigger>
-              <SheetContent>
+              <SheetContent side="right" style={{ width: "95vw" }}>
                 <SheetHeader>
                   <SheetTitle>Cart</SheetTitle>
                   <SheetDescription>
@@ -257,18 +270,22 @@ export default function Header() {
 
                       {/* Action Buttons */}
                       <div className="p-6 bg-black space-y-3">
+                        <Link href={"/cart"} className="w-full">
                         <Button
                           className="w-full bg-transparent border-white hover:border-[#B8956A] text-white hover:bg-[#B8956A] hover:text-gray-900"
                           variant={"outline"}
                         >
-                          <Link href={"/cart"}>VIEW CART</Link>
+                          VIEW CART
                         </Button>
+                        </Link>
+                        <Link href={"/checkout"} className="w-full mt-3">
                         <Button
                           className="w-full text-white hover:opacity-90"
                           style={{ backgroundColor: "#B8956A" }}
-                        >
-                          <Link href={"/checkout"}>CHECKOUT</Link>
+                          >
+                          CHECKOUT
                         </Button>
+                        </Link>
                       </div>
                     </div>
                   </SheetDescription>
@@ -278,11 +295,11 @@ export default function Header() {
           </div>
           {/* offcanvas in mobile */}
           <div className="block lg:hidden">
-            <Sheet>
+            <Sheet open={open1} onOpenChange={setOpen1}>
               <SheetTrigger>
                 <Menu />
               </SheetTrigger>
-              <SheetContent side="left" style={{ width: "60vw" }}>
+              <SheetContent side="left" style={{ width: "65vw" }}>
                 <SheetHeader>
                   <SheetTitle className=" text-sm">
                     Contact us 24/7 : +91-9781234560
@@ -292,7 +309,7 @@ export default function Header() {
                     <p className=" py-2"> furniture@gmail.com</p>
                     {/* menues */}
                     <div className=" py-2 border-b border-gray-200 text-left font-semibold capitalize">
-                      <h1>home</h1>
+                      <Link href="/">home</Link>
                     </div>
 
                     <Accordion
@@ -303,7 +320,7 @@ export default function Header() {
                       {/* living */}
                       <AccordionItem value="item-1">
                         <AccordionTrigger className=" font-semibold capitalize">
-                          living
+                          <Link href="/categories/living">living</Link>
                         </AccordionTrigger>
                         <AccordionContent>
                           {/* Yes. It adheres to the WAI-ARIA design pattern. */}
@@ -324,19 +341,25 @@ export default function Header() {
                           pages
                         </AccordionTrigger>
                         <AccordionContent>
-                          <ul className=" space-y-2 text-left px-6">
-                            <li>About Us</li>
-                            <li>Cart</li>
-                            <li>checkout</li>
-                            <li>frequently asked questions</li>
-                          </ul>
+                         <div className="flex flex-col gap-2 text-left ms-3">
+                          <Link href="/about-us">About Us</Link>
+                          <Link href="/cart">Cart</Link>
+                          <Link href="/checkout">checkout</Link>
+                          <Link href="/frequently-questions">frequently asked questions</Link>
+                         </div>
                         </AccordionContent>
                       </AccordionItem>
                     </Accordion>
 
                     {/* login / register */}
                     <div className=" py-2 border-b border-gray-200 text-left font-semibold capitalize">
-                      <h1>login / register</h1>
+                      {
+                        auth ? (
+                          <Link href="/my-dashboard">My Dashboard</Link>
+                        ) : (
+                          <Link href="/login-register">login / register</Link>
+                        )
+                      }
                     </div>
                   </SheetDescription>
                 </SheetHeader>

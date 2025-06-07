@@ -30,7 +30,7 @@ export default function page() {
   const wishlistItems = useSelector((state) => state.wishlist.wishlistItems);
   return (
     <>
-      <div className="max-w-[1100px] w-[70%] md:w-[80%] lg:w-[100%] mx-auto px-4">
+      <div className="max-w-[1100px] w-[95%] md:w-[85%] lg:w-[100%] mx-auto px-4">
         <div className="mt-[30px] py-[40px] border-t border-t-gray-200 border-b border-gray-200 text-center">
           <h1 className="text-[40px] font-bold mb-[10px] font-serif text animate-fade-in">
             My Wishlist
@@ -42,7 +42,10 @@ export default function page() {
               </BreadcrumbItem>
               <BreadcrumbSeparator />
               <BreadcrumbItem className="text-center">
-                <BreadcrumbLink className="text-[#C09578] hover:text-[#a37a5c] transition-colors" href="/wishlist">
+                <BreadcrumbLink
+                  className="text-[#C09578] hover:text-[#a37a5c] transition-colors"
+                  href="/wishlist"
+                >
                   My Wishlist
                 </BreadcrumbLink>
               </BreadcrumbItem>
@@ -52,56 +55,58 @@ export default function page() {
 
         {/* Cart Table */}
         <div className="mt-10 mb-16">
-          <Table className="w-full border border-gray-200 rounded-lg overflow-hidden shadow-sm">
-            <TableHeader>
-              <TableRow className="border-b border-[#C09578] bg-[#f8f5f3]">
-                <TableHead className="text-center py-5 text font-semibold text-gray-800 text-[16px]">
-                  Delete
-                </TableHead>
-                <TableHead className="text-center py-5 text font-semibold text-gray-800 text-[16px]">
-                  Image
-                </TableHead>
-                <TableHead className="text-center py-5 text font-semibold text-gray-800 text-[16px]">
-                  Product
-                </TableHead>
-                <TableHead className="text-center py-5 text font-semibold text-gray-800 text-[16px]">
-                  Price
-                </TableHead>
-                <TableHead className="text-center py-5 text font-semibold text-gray-800 text-[16px]">
-                  Stock
-                </TableHead>
-                <TableHead className="text-center py-5 text font-semibold text-gray-800 text-[16px]">
-                  Add To Cart
-                </TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {wishlistItems.length > 0 ? (
-                wishlistItems.map((item) => (
-                <CartItem
-                  key={item.id}
-                  image={item.image}
-                  title={item.title}
-                  price={item.price}
-                  quantity={item.quantity}
-                  total={item.price * item.quantity}
-                  id={item.id}
-                />
-              ))
-              ) : (
-                <TableRow className="hover:bg-[transparent] transition-colors duration-200">
-                  <TableCell colSpan={6} className="text-center">
-                    <div className="flex flex-col items-center justify-center">
-                      <Image src="/HomePageImgs/my-Order.png" alt="No items in wishlist" width={100} height={100} className="w-[40%] lg:w-[20%]   object-cover" />
-                      <p className="text-center text-gray-500 font-semibold text-lg text">
-                        No items in wishlist
-                      </p>
-                    </div>
-                  </TableCell>
+          {wishlistItems.length > 0 ? (
+            <Table className="w-full border border-gray-200 rounded-lg overflow-hidden shadow-sm">
+              <TableHeader>
+                <TableRow className="border-b border-[#C09578] bg-[#f8f5f3]">
+                  <TableHead className="text-center py-2 md:py-5 text font-semibold text-gray-800 text-sm md:text-[16px]">
+                    Delete
+                  </TableHead>
+                  <TableHead className="text-center py-2 md:py-5 text font-semibold text-gray-800 text-sm md:text-[16px]">
+                    Image
+                  </TableHead>
+                  <TableHead className="text-center py-2 md:py-5 text font-semibold text-gray-800 text-sm md:text-[16px]">
+                    Product
+                  </TableHead>
+                  <TableHead className="text-center py-2 md:py-5 text font-semibold text-gray-800 text-sm md:text-[16px]">
+                    Price
+                  </TableHead>
+                  <TableHead className="text-center py-2 md:py-5 text font-semibold text-gray-800 text-sm md:text-[16px]">
+                    Stock
+                  </TableHead>
+                  <TableHead className="text-center py-2 md:py-5 text font-semibold text-gray-800 text-sm md:text-[16px]">
+                    Action
+                  </TableHead>
                 </TableRow>
-              )}
-            </TableBody>
-          </Table>
+              </TableHeader>
+              <TableBody>
+                {wishlistItems.map((item) => (
+                  <CartItem
+                    key={item.id}
+                    image={item.image}
+                    title={item.title}
+                    price={item.price}
+                    quantity={item.quantity}
+                    total={item.price * item.quantity}
+                    id={item.id}
+                  />
+                ))}
+              </TableBody>
+            </Table>
+          ) : (
+            <div className="flex flex-col items-center justify-center mt-10">
+              <Image
+                src="/images/wishlist-Empty.jpg"
+                alt="No items in wishlist"
+                width={100}
+                height={100}
+                className="w-[50%] lg:w-[20%]   object-cover"
+              />
+              <p className="text-center text-gray-500 font-semibold text-lg text">
+                No items in wishlist
+              </p>
+            </div>
+          )}
         </div>
       </div>
     </>
@@ -116,7 +121,7 @@ const CartItem = ({ image, title, price, quantity, total, id }) => {
     price: price,
     quantity: quantity,
     total: total,
-  }
+  };
 
   const [loading, setLoading] = useState("ADD TO CART");
 
@@ -128,13 +133,13 @@ const CartItem = ({ image, title, price, quantity, total, id }) => {
     // dispatch(removeFromWishlist(item));
     toast.success("Item added to cart");
     setLoading("ADD TO CART");
-  }
+  };
   return (
     <TableRow className="hover:bg-gray-50 transition-colors group">
       <TableCell className="py-6 text-center border border-gray-200">
-        <Button 
-          variant="ghost" 
-          size="icon" 
+        <Button
+          variant="ghost"
+          size="icon"
           className="hover:bg-red-50 transition-all duration-300"
           onClick={() => setOpen(true)}
         >
@@ -142,7 +147,10 @@ const CartItem = ({ image, title, price, quantity, total, id }) => {
         </Button>
       </TableCell>
       <TableCell className="py-6 h-[120px] text-center flex justify-center border border-gray-200">
-        <Link href="/product-details/stools" className="overflow-hidden rounded-md">
+        <Link
+          href="/product-details/stools"
+          className="overflow-hidden rounded-md"
+        >
           <Image
             src={image}
             alt={title}
@@ -153,9 +161,7 @@ const CartItem = ({ image, title, price, quantity, total, id }) => {
         </Link>
       </TableCell>
       <TableCell className="py-6 text-center border font-medium text-gray-800 border-gray-200 hover:text-[#C09578] transition-colors">
-        <Link href="/product-details/stools">
-          {title}
-        </Link>
+        <Link href="/product-details/stools">{title}</Link>
       </TableCell>
       <TableCell className="py-6 text-center border font-semibold text-[#C09578] border-gray-200">
         Rs. {price}
@@ -166,16 +172,14 @@ const CartItem = ({ image, title, price, quantity, total, id }) => {
         </span>
       </TableCell>
       <TableCell className="border font-semibold text-black border-gray-200">
-        <Button 
+        <Button
           onClick={sendItemToCart}
-          variant="ghost" 
-          size="icon" 
+          variant="ghost"
+          size="icon"
           className="hover:bg-black hover:text-white bg-[#C09578] flex items-center justify-center gap-2 px-6 py-2.5 transition-all duration-300 hover:shadow-lg w-full"
         >
           <ShoppingCart className="h-4 w-4" />
-          <span className="font-medium">
-            {loading}
-          </span>
+          <span className="font-medium">{loading}</span>
         </Button>
       </TableCell>
 
@@ -183,7 +187,7 @@ const CartItem = ({ image, title, price, quantity, total, id }) => {
         <DialogContent className="sm:max-w-[700px]">
           <div className="flex flex-col items-center gap-6 py-4">
             <Image
-              src="/HomePageImgs/my-Order.png"
+              src="/HomePageImgs/cccfbdab-3bec-439f-88b9-5694698cd302-1670132652.png"
               alt="Monsta Logo"
               width={200}
               height={80}
@@ -208,7 +212,7 @@ const CartItem = ({ image, title, price, quantity, total, id }) => {
                   setOpen(false);
                 }}
                 variant="secondary"
-                className="bg-[#C69B7B] hover:bg-[#b38a6d] px-8"
+                className="bg-[#C69B7B] text-white hover:bg-[#b38a6d] px-8"
               >
                 NO
               </Button>

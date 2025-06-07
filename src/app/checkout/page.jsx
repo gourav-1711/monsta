@@ -42,8 +42,8 @@ export default function page() {
 
       {/* billing details */}
       <div className="mt-8 mb-12">
-        <h2 className="text-2xl font-serif font-bold mb-6 bg-black text-white p-3 w-[50%]">BILLING DETAILS</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-[50%]">
+        <h2 className="text-2xl font-serif font-bold mb-6 bg-black text-white p-3 w-[95%] mx-auto md:mx-2 lg:w-[50%]">BILLING DETAILS</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-[95%] mx-auto md:mx-2 lg:w-[50%]">
           {/* Name */}
           <div className="space-y-2">
             <Label htmlFor="name" className="text-md font-semibold text ">
