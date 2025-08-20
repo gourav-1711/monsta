@@ -2,12 +2,14 @@
 @tailwind components;
 @tailwind utilities;
 
-
 body {
   font-family: Arial, Helvetica, sans-serif;
 }
-.text{
-  font-family: 'Times New Roman', Times, serif;
+
+
+
+.text {
+  font-family: "Times New Roman", Times, serif;
 }
 
 @layer utilities {
@@ -17,13 +19,11 @@ body {
   .animate-fade-in {
     animation: fadeIn 0.3s ease-in-out;
   }
-
 }
-.slideIn{
+.slideIn {
   transform-origin: top;
   animation: slideIn 0.7s -0.2s ease-in-out;
 }
-
 
 @keyframes slideIn {
   from {
@@ -47,6 +47,7 @@ body {
 
 @layer base {
   :root {
+    
     --background: 0 0% 100%;
     --foreground: 0 0% 3.9%;
     --card: 0 0% 100%;
@@ -127,12 +128,11 @@ body {
   }
 }
 
-
 /* css work */
 
 .swiper-pagination-bullet-active {
-  background-color: #C09578 !important;
-  box-shadow: 0px 0px 5px 1px #C09578 !important;
+  background-color: #c09578 !important;
+  box-shadow: 0px 0px 5px 1px #c09578 !important;
   border-radius: 50% !important;
   width: 10px !important;
   height: 10px !important;
@@ -142,16 +142,14 @@ body {
   height: 100%;
   overflow: visible !important;
 }
-.scroll-color::-webkit-scrollbar{
+.scroll-color::-webkit-scrollbar {
   background-color: transparent;
   scrollbar-width: 4px;
   width: 4px;
 }
-.scroll-color::-webkit-scrollbar-thumb{
-  background-color: #C09578;
+.scroll-color::-webkit-scrollbar-thumb {
+  background-color: #c09578;
 }
-
-
 
 /* Hide scrollbar */
 body::-webkit-scrollbar {

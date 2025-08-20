@@ -3,7 +3,7 @@ import "./globals.css";
 import Header from "./comman/Header";
 import Footer from "./comman/Footer";
 import ScrollTop from "./comman/ScrollTop";
-import { ReduxProvider } from "@/lib/providers/ReduxProvider";
+import { ReduxProvider } from "@/app/(redux)/providers/ReduxProvider";
 import { Toaster } from "@/components/ui/sonner";
 
 export const metadata = {

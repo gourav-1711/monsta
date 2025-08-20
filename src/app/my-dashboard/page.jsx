@@ -1,3 +1,15 @@
+"use client";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import React from "react";
 import {
   Breadcrumb,
@@ -18,8 +30,42 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
+import { logout } from "../(redux)/features/auth/auth";
+import { useRouter } from "next/navigation";
+
 export default function page() {
+  const dispatch = useDispatch();
+  const router = useRouter();
+
+  const { details } = useSelector((state) => state.auth);
+
+  const profileUpdate = (e) => {
+    e.preventDefault();
+
+    const obj = {
+      gender: e.target.gender.value,
+      name: e.target.name.value,
+      mobile: e.target.mobile.value,
+      address: e.target.address.value,
+    };
+  };
+
+  const removeAuth = () => {
+    dispatch(logout());
+    router.push("/");
+  };
+
   return (
     <>
       <div className="max-w-[1100px] mx-auto">
@@ -45,7 +91,7 @@ export default function page() {
         {/* Dashboard Content */}
         <div className="py-12">
           <Tabs
-            defaultValue="dashboard"
+            defaultValue="profile"
             className="w-[95%] md:w-[90%] lg:w-[100%] mx-auto"
           >
             <div className="grid grid-cols-1 md:grid-cols-[30%_70%] justify-center gap-8">
@@ -112,11 +158,21 @@ export default function page() {
                         </TableCaption>
                         <TableHeader>
                           <TableRow>
-                            <TableHead className="border border-gray-200 font-semibold text-center text-sm md:text-lg text-black">Order</TableHead>
-                            <TableHead className="border border-gray-200 font-semibold text-center text-sm md:text-lg text-black" >Date</TableHead>
-                            <TableHead className="border border-gray-200 font-semibold text-center text-sm md:text-lg text-black">Status</TableHead>
-                            <TableHead className="border border-gray-200 font-semibold text-center text-sm md:text-lg text-black">Total</TableHead>
-                            <TableHead className="border border-gray-200 font-semibold text-center text-sm md:text-lg text-black">Action</TableHead>
+                            <TableHead className="border border-gray-200 font-semibold text-center text-sm md:text-lg text-black">
+                              Order
+                            </TableHead>
+                            <TableHead className="border border-gray-200 font-semibold text-center text-sm md:text-lg text-black">
+                              Date
+                            </TableHead>
+                            <TableHead className="border border-gray-200 font-semibold text-center text-sm md:text-lg text-black">
+                              Status
+                            </TableHead>
+                            <TableHead className="border border-gray-200 font-semibold text-center text-sm md:text-lg text-black">
+                              Total
+                            </TableHead>
+                            <TableHead className="border border-gray-200 font-semibold text-center text-sm md:text-lg text-black">
+                              Action
+                            </TableHead>
                           </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -134,7 +190,9 @@ export default function page() {
                               $250.00
                             </TableCell>
                             <TableCell className="text-center border border-gray-200">
-                              <Button className="font-medium text-sm md:text-lg text-[#C09578] bg-transparent shadow-none hover:bg-transparent px-8 py-2 rounded-full">View</Button>
+                              <Button className="font-medium text-sm md:text-lg text-[#C09578] bg-transparent shadow-none hover:bg-transparent px-8 py-2 rounded-full">
+                                View
+                              </Button>
                             </TableCell>
                           </TableRow>
                         </TableBody>
@@ -341,7 +399,11 @@ export default function page() {
                 <TabsContent value="profile" className="mt-0">
                   <div className="p-6 bg-white border border-gray-200 shadow-sm rounded-lg w-full">
                     {/* Profile Form */}
-                    <form action="" className="space-y-4">
+                    <form
+                      onSubmit={profileUpdate}
+                      action=""
+                      className="space-y-4"
+                    >
                       <div className="">
                         <RadioGroup
                           defaultValue={"mr"}
@@ -359,23 +421,39 @@ export default function page() {
                       </div>
                       <div className="">
                         <Label htmlFor="name">Name</Label>
-                        <Input type="text" name="name" id="name" />
+                        <Input
+                          type="text"
+                          defaultValue={details.name}
+                          name="name"
+                          id="name"
+                        />
                       </div>
                       <div className="">
                         <Label htmlFor="email">Email</Label>
-                        <Input type="email" name="email" id="email" />
+                        <Input
+                          type="email"
+                          defaultValue={details.email}
+                          name="email"
+                          id="email"
+                        />
                       </div>
                       <div className="">
-                        <Label htmlFor="confirm-password">Phone Number</Label>
+                        <Label htmlFor="mobile">Phone Number</Label>
                         <Input
                           type="number"
-                          name="phone-number"
-                          id="phone-number"
+                          name="mobile"
+                          id="mobile"
+                          defaultValue={details.mobile}
                         />
                       </div>
                       <div className="">
                         <Label htmlFor="address">Address</Label>
-                        <Input type="text" name="address" id="address" />
+                        <Input
+                          type="text"
+                          defaultValue={details.address || ""}
+                          name="address"
+                          id="address"
+                        />
                       </div>
                       <Button
                         type="submit"
@@ -430,12 +508,34 @@ export default function page() {
                   <div className="p-6 bg-white border border-gray-200 shadow-sm rounded-lg w-full">
                     <h2 className="text-2xl font-bold mb-4">Logout</h2>
                     <p>Are you sure you want to logout?</p>
-                    <Button
-                      type="submit"
-                      className="bg-[#C09578] hover:bg-[#ab8468] text-white px-8 py-2 rounded-full flex mt-4 justify-end"
-                    >
-                      Logout
-                    </Button>
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button className="bg-[#C09578] hover:bg-[#ab8468] text-white px-8 py-2 rounded-full flex mt-4 justify-end">
+                          Logout
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>
+                            Are you absolutely sure?
+                          </AlertDialogTitle>
+                          <AlertDialogDescription>
+                            This action cannot be undone. This will permanently
+                            delete your account and remove your data from our
+                            servers.
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Cancel</AlertDialogCancel>
+                          <AlertDialogAction
+                            className="bg-[#cf3131] hover:bg-[#b01e1e] text-white "
+                            onClick={removeAuth}
+                          >
+                            Continue
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
                   </div>
                 </TabsContent>
               </div>

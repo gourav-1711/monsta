@@ -24,8 +24,8 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { useDispatch, useSelector } from "react-redux";
-import { addToCart } from "@/lib/features/cart/cart";
-import { addToWishlist } from "@/lib/features/wishlist/wishlist";
+import { addToCart } from "../../(redux)/features/cart/cart";
+import { addToWishlist } from "../../(redux)/features/wishlist/wishlist";
 import { toast } from "sonner";
 export default function page() {
   const {

@@ -50,9 +50,9 @@ export default function Slider3() {
                 </div>
 
                 {/* Customer Name */}
-                <h3 className="text-[16px] font-bold text text-gray-800 mb-2 tracking-wider">
+                <span className="block text-[16px] font-bold text-gray-800 mb-2 tracking-wider">
                   KATHY YOUNG
-                </h3>
+                </span>
 
                 {/* Customer Title */}
                 <p className="text-gray-600 text-[14px] mb-4">CEO of SunPark</p>
@@ -100,9 +100,9 @@ export default function Slider3() {
                 </div>
 
                 {/* Customer Name */}
-                <h3 className="text-[16px] font-bold text text-gray-800 mb-2 tracking-wider">
+                <span className="block text-[16px] font-bold text-gray-800 mb-2 tracking-wider">
                   KATHY YOUNG
-                </h3>
+                </span>
 
                 {/* Customer Title */}
                 <p className="text-gray-600 text-[14px] mb-4">CEO of SunPark</p>
@@ -150,9 +150,9 @@ export default function Slider3() {
                 </div>
 
                 {/* Customer Name */}
-                <h3 className="text-[16px] font-bold text text-gray-800 mb-2 tracking-wider">
+                <span className="block text-[16px] font-bold text-gray-800 mb-2 tracking-wider">
                   KATHY YOUNG
-                </h3>
+                </span>
 
                 {/* Customer Title */}
                 <p className="text-gray-600 text-[14px] mb-4">CEO of SunPark</p>

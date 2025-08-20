@@ -14,6 +14,8 @@ import "swiper/css/pagination";
 import Slider2 from "./comman/Home/Slider2";
 import Slider3 from "./comman/Home/Slider3";
 import BestSelling from "./comman/BestSelling";
+
+
 export default function Home() {
   return (
     <>
@@ -32,9 +34,9 @@ export default function Home() {
               height={80}
               className="w-full object-cover hover:scale-110 transition-transform duration-300 "
             />
-            <div className=" absolute top-0 left-0 p-4  capitalize font-semibold">
-              <h3 className="text-[15px] font-mono">design creative</h3>
-              <p className=" text-2xl text">chair collection</p>
+            <div className="absolute top-0 left-0 p-4 capitalize font-semibold">
+              <span className="block text-[15px] font-mono">design creative</span>
+              <p className="text-2xl">chair collection</p>
             </div>
           </div>
           <div className="bg-white  shadow relative flex flex-col items-center overflow-hidden">
@@ -45,9 +47,9 @@ export default function Home() {
               height={80}
               className="w-full object-cover hover:scale-110 transition-transform duration-300 "
             />
-            <div className=" absolute top-0 left-0 p-4  capitalize font-semibold">
-              <h3 className="text-[15px] font-mono">design creative</h3>
-              <p className=" text-2xl text">chair collection</p>
+            <div className="absolute top-0 left-0 p-4 capitalize font-semibold">
+              <span className="block text-[15px] font-mono">design creative</span>
+              <p className="text-2xl">chair collection</p>
             </div>
           </div>
           <div className="bg-white  shadow relative flex flex-col items-center overflow-hidden">
@@ -58,9 +60,9 @@ export default function Home() {
               height={80}
               className="w-full object-cover hover:scale-110 transition-transform duration-300 "
             />
-            <div className=" absolute top-0 left-0 p-4  capitalize font-semibold">
-              <h3 className="text-[15px] font-mono">design creative</h3>
-              <p className=" text-2xl text">chair collection</p>
+            <div className="absolute top-0 left-0 p-4 capitalize font-semibold">
+              <span className="block text-[15px] font-mono">design creative</span>
+              <p className="text-2xl">chair collection</p>
             </div>
           </div>
         </div>

@@ -21,10 +21,10 @@ import {
   TableCell,
 } from "@/components/ui/table";
 import { useDispatch, useSelector } from "react-redux";
-import { updateQuantity } from "@/lib/features/cart/cart";
+import { updateQuantity } from "../(redux)/features/cart/cart";
 import { Dialog } from "@/components/ui/dialog";
 import { DialogContent } from "@/components/ui/dialog";
-import { removeFromCart } from "@/lib/features/cart/cart";
+import { removeFromCart } from "../(redux)/features/cart/cart";
 import { toast } from "sonner";
 
 export default function page() {

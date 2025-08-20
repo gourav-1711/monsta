@@ -21,11 +21,15 @@ import {
   TableCell,
 } from "@/components/ui/table";
 import { useSelector, useDispatch } from "react-redux";
-import { addToCart } from "@/lib/features/cart/cart";
-import { removeFromWishlist } from "@/lib/features/wishlist/wishlist";
+import { addToCart } from   "../(redux)/features/cart/cart";
+import { removeFromWishlist } from "../(redux)/features/wishlist/wishlist";
 import { toast } from "sonner";
 import { Dialog } from "@/components/ui/dialog";
 import { DialogContent } from "@/components/ui/dialog";
+
+
+
+
 export default function page() {
   const wishlistItems = useSelector((state) => state.wishlist.wishlistItems);
   return (

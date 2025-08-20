@@ -28,23 +28,26 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { useDispatch, useSelector } from "react-redux";
-import { totalAmount } from "@/lib/features/cart/cart";
+import { totalAmount } from "../(redux)/features/cart/cart";
 import { usePathname } from "next/navigation";
+import { logout } from "../(redux)/features/auth/auth";
+import { fetchProfile } from "../(redux)/features/auth/auth";
 
 export default function Header() {
-  // Initialize auth state from localStorage if available, otherwise false
-  const [auth, setAuth] = useState(true);
+  const auth = useSelector((state) => state.auth.isLogin);
+
+  const details = useSelector((state) => state.auth.details);
 
   // header scroll
   const [header, setHeader] = useState(false);
 
   // for sheets pages
-  const [open1, setOpen1] = useState(false)
+  const [open1, setOpen1] = useState(false);
   // for cart sheet
-  const [open2, setOpen2] = useState(false)
+  const [open2, setOpen2] = useState(false);
 
   // navigation
-  const navigation = usePathname()
+  const navigation = usePathname();
 
   // window scroll
   useEffect(() => {
@@ -74,9 +77,10 @@ export default function Header() {
 
   // close sheets when navigation changes to other pages
   useEffect(() => {
-    setOpen1(false)
-    setOpen2(false)
-  }, [navigation])
+    setOpen1(false);
+    setOpen2(false);
+  }, [navigation]);
+  console.log(details);
 
   return (
     <>
@@ -104,13 +108,17 @@ export default function Header() {
               {/* dropdown */}
               <div className={`${auth ? "block" : "hidden"} duration-200`}>
                 <DropdownMenu>
-                  <DropdownMenuTrigger className=" flex items-center gap-2 text-sm hover:text-[#C09578]">My Account <ChevronDown className=" hover:text-[#C09578]" size={16} /></DropdownMenuTrigger>
+                  <DropdownMenuTrigger className=" flex items-center gap-2 text-sm hover:text-[#C09578]">
+                    My Account{" "}
+                    <ChevronDown className=" hover:text-[#C09578]" size={16} />
+                  </DropdownMenuTrigger>
                   <DropdownMenuContent className=" bg-white shadow-md rounded-md w-40">
+                    <DropdownMenuLabel>{details.name}</DropdownMenuLabel>
                     <DropdownMenuItem>
                       <Link href="/my-dashboard">My Dashboard</Link>
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem onClick={() => setAuth(false)}>Logout</DropdownMenuItem>
+                    {/* <DropdownMenuItem onClick={() => dispatch(logout())}>Logout</DropdownMenuItem> */}
                   </DropdownMenuContent>
                 </DropdownMenu>
               </div>
@@ -270,22 +278,20 @@ export default function Header() {
 
                       {/* Action Buttons */}
                       <div className="p-6 bg-black space-y-3">
-                        <Link href={"/cart"} className="w-full">
                         <Button
+                          onClick={() => (window.location.href = "/cart")}
                           className="w-full bg-transparent border-white hover:border-[#B8956A] text-white hover:bg-[#B8956A] hover:text-gray-900"
                           variant={"outline"}
                         >
                           VIEW CART
                         </Button>
-                        </Link>
-                        <Link href={"/checkout"} className="w-full mt-3">
                         <Button
-                          className="w-full text-white hover:opacity-90"
+                          onClick={() => (window.location.href = "/checkout")}
+                          className="w-full mt-3 text-white hover:opacity-90"
                           style={{ backgroundColor: "#B8956A" }}
-                          >
+                        >
                           CHECKOUT
                         </Button>
-                        </Link>
                       </div>
                     </div>
                   </SheetDescription>
@@ -341,25 +347,25 @@ export default function Header() {
                           pages
                         </AccordionTrigger>
                         <AccordionContent>
-                         <div className="flex flex-col gap-2 text-left ms-3">
-                          <Link href="/about-us">About Us</Link>
-                          <Link href="/cart">Cart</Link>
-                          <Link href="/checkout">checkout</Link>
-                          <Link href="/frequently-questions">frequently asked questions</Link>
-                         </div>
+                          <div className="flex flex-col gap-2 text-left ms-3">
+                            <Link href="/about-us">About Us</Link>
+                            <Link href="/cart">Cart</Link>
+                            <Link href="/checkout">checkout</Link>
+                            <Link href="/frequently-questions">
+                              frequently asked questions
+                            </Link>
+                          </div>
                         </AccordionContent>
                       </AccordionItem>
                     </Accordion>
 
                     {/* login / register */}
                     <div className=" py-2 border-b border-gray-200 text-left font-semibold capitalize">
-                      {
-                        auth ? (
-                          <Link href="/my-dashboard">My Dashboard</Link>
-                        ) : (
-                          <Link href="/login-register">login / register</Link>
-                        )
-                      }
+                      {auth ? (
+                        <Link href="/my-dashboard">My Dashboard</Link>
+                      ) : (
+                        <Link href="/login-register">login / register</Link>
+                      )}
                     </div>
                   </SheetDescription>
                 </SheetHeader>
@@ -750,8 +756,6 @@ export default function Header() {
           </Link>
         </nav>
       </header>
-
-   
     </>
   );
 }
