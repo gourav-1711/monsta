@@ -4,7 +4,7 @@ import cartReducer from '../features/cart/cart'
 import wishlistReducer from '../features/wishlist/wishlist'
 import authReducer from '../features/auth/auth'
 
-export const makeStore = () => {
+export const makeStore = (preloadedState) => {
   return configureStore({
     reducer: {
       counter: counterReducer,
@@ -12,8 +12,9 @@ export const makeStore = () => {
       wishlist: wishlistReducer,
       auth: authReducer,
     },
+    preloadedState,
   })
 }
 
 // Use this wrapper to create a store instance
-export const store = makeStore()
+// export const store = makeStore()

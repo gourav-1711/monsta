@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from 'react';
 import Image from 'next/image';
-import styles from '../product-details/[...id]/ProductDetails.module.css';
+import styles from '../../product-details/[...id]/ProductDetails.module.css';
 
 const ImageZoom = ({ src, alt }) => {
   const [isZoomed, setIsZoomed] = useState(false);

@@ -28,15 +28,26 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { useDispatch, useSelector } from "react-redux";
-import { totalAmount } from "../(redux)/features/cart/cart";
+import { addCart, totalAmount, updateFullCart } from "../(redux)/features/cart/cart";
 import { usePathname } from "next/navigation";
-import { logout } from "../(redux)/features/auth/auth";
-import { fetchProfile } from "../(redux)/features/auth/auth";
 
 export default function Header() {
+  // cookies
   const auth = useSelector((state) => state.auth.isLogin);
-
+  
+  // user details
   const details = useSelector((state) => state.auth.details);
+
+  // get total amount from redux
+  const dispatch = useDispatch();
+
+  // cart items
+  const cartItems = useSelector((state) => state.cart.cartItems);
+  // total price
+  const totalPrice = useSelector((state) => state.cart.totalPrice);
+
+  // wishlist items
+  const wishlistItems = useSelector((state) => state.wishlist.wishlistItems);
 
   // header scroll
   const [header, setHeader] = useState(false);
@@ -45,6 +56,8 @@ export default function Header() {
   const [open1, setOpen1] = useState(false);
   // for cart sheet
   const [open2, setOpen2] = useState(false);
+  // for profile dropdown
+  const [open3, setOpen3] = useState(false);
 
   // navigation
   const navigation = usePathname();
@@ -59,28 +72,18 @@ export default function Header() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // get total amount from redux
-  const dispatch = useDispatch();
-
-  // cart items
-  const cartItems = useSelector((state) => state.cart.cartItems);
-  // total price
-  const totalPrice = useSelector((state) => state.cart.totalPrice);
-
-  // wishlist items
-  const wishlistItems = useSelector((state) => state.wishlist.wishlistItems);
-
   // total amount when cart items change
   useEffect(() => {
     dispatch(totalAmount());
+    dispatch(updateFullCart(cartItems));
   }, [cartItems]);
 
   // close sheets when navigation changes to other pages
   useEffect(() => {
     setOpen1(false);
     setOpen2(false);
+    setOpen3(false);
   }, [navigation]);
-  console.log(details);
 
   return (
     <>
@@ -107,7 +110,7 @@ export default function Header() {
               </Link>
               {/* dropdown */}
               <div className={`${auth ? "block" : "hidden"} duration-200`}>
-                <DropdownMenu>
+                <DropdownMenu onOpenChange={setOpen3} open={open3}>
                   <DropdownMenuTrigger className=" flex items-center gap-2 text-sm hover:text-[#C09578]">
                     My Account{" "}
                     <ChevronDown className=" hover:text-[#C09578]" size={16} />
@@ -181,7 +184,7 @@ export default function Header() {
                   <div className="absolute top-[30%] -left-3 bg-[#C09578] text-white text-[10px] font-bold rounded-full size-5 flex items-center justify-center">
                     {cartItems.length}
                   </div>
-                  <button className="text-[12px] font-bold capitalize flex items-center py-1 gap-2 px-2 ">
+                  <div className="text-[12px] font-bold capitalize flex items-center py-1 gap-2 px-2 ">
                     <ShoppingCart
                       className=" bg-background group-hover:text-[#C09578] border-r pr-1"
                       size={28}
@@ -203,13 +206,13 @@ export default function Header() {
                       />
                     </span>
                     {/* offcanvas */}
-                  </button>
+                  </div>
                 </div>
               </SheetTrigger>
               <SheetContent side="right" style={{ width: "95vw" }}>
                 <SheetHeader>
                   <SheetTitle>Cart</SheetTitle>
-                  <SheetDescription>
+                  <div>
                     <div className="">
                       {cartItems.length > 0 ? (
                         cartItems.map((item, index) => (
@@ -233,15 +236,15 @@ export default function Header() {
                                     <h3 className="font-medium text-gray-800 mb-1">
                                       {item.title}
                                     </h3>
-                                    <p className="text-sm text-gray-600 mb-2">
+                                    <span className="text-sm text-gray-600 mb-2">
                                       Qty: {item.quantity}
-                                    </p>
-                                    <p
+                                    </span>
+                                    <span
                                       className="text-lg font-medium"
                                       style={{ color: "#B8956A" }}
                                     >
                                       Rs. {item.price}
-                                    </p>
+                                    </span>
                                   </div>
                                   <button className="p-1">
                                     <X className="w-5 h-5 text-gray-400" />
@@ -294,7 +297,7 @@ export default function Header() {
                         </Button>
                       </div>
                     </div>
-                  </SheetDescription>
+                  </div>
                 </SheetHeader>
               </SheetContent>
             </Sheet>
@@ -310,9 +313,9 @@ export default function Header() {
                   <SheetTitle className=" text-sm">
                     Contact us 24/7 : +91-9781234560
                   </SheetTitle>
-                  <SheetDescription>
+                  <div>
                     {/* gmail */}
-                    <p className=" py-2"> furniture@gmail.com</p>
+                    <span className=" py-2"> furniture@gmail.com</span>
                     {/* menues */}
                     <div className=" py-2 border-b border-gray-200 text-left font-semibold capitalize">
                       <Link href="/">home</Link>
@@ -329,7 +332,7 @@ export default function Header() {
                           <Link href="/categories/living">living</Link>
                         </AccordionTrigger>
                         <AccordionContent>
-                          {/* Yes. It adheres to the WAI-ARIA design pattern. */}
+                          <Link href="/categories/living">Tables</Link>
                         </AccordionContent>
                       </AccordionItem>
                       {/* sofa */}
@@ -367,7 +370,7 @@ export default function Header() {
                         <Link href="/login-register">login / register</Link>
                       )}
                     </div>
-                  </SheetDescription>
+                  </div>
                 </SheetHeader>
               </SheetContent>
             </Sheet>

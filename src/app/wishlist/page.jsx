@@ -32,6 +32,8 @@ import { DialogContent } from "@/components/ui/dialog";
 
 export default function page() {
   const wishlistItems = useSelector((state) => state.wishlist.wishlistItems);
+
+  
   return (
     <>
       <div className="max-w-[1100px] w-[95%] md:w-[85%] lg:w-[100%] mx-auto px-4">

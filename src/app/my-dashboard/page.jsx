@@ -43,15 +43,24 @@ import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
 import { logout } from "../(redux)/features/auth/auth";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
+import axios from "axios";
+import { toast } from "sonner";
+import { fetchProfile } from "../(redux)/features/auth/auth";
 
 export default function page() {
   const dispatch = useDispatch();
   const router = useRouter();
 
+  // password error
+  const [passwordError, setPasswordError] = useState("");
+
   const { details } = useSelector((state) => state.auth);
+  const { user } = useSelector((state) => state.auth);
 
   const profileUpdate = (e) => {
     e.preventDefault();
+    
 
     const obj = {
       gender: e.target.gender.value,
@@ -59,6 +68,85 @@ export default function page() {
       mobile: e.target.mobile.value,
       address: e.target.address.value,
     };
+
+    // api call here
+    axios
+      .post(process.env.NEXT_PUBLIC_API_URL + "/user/update-profile", obj, {
+        headers: { Authorization: `Bearer ${user}` },
+      })
+      .then((res) => {
+       
+        toast.success("Profile updated successfully");
+        // router.refresh();
+        console.log(res);
+        dispatch(fetchProfile());
+      })
+      .catch((err) => {
+        console.log(err);
+        toast.error(err.response?.data?._message || "Something went wrong");
+      });
+  };
+
+  const handleChangePassword = (e) => {
+    e.preventDefault();
+    const obj = {
+      current_password: e.target.current_password.value,
+      new_password: e.target.new_password.value,
+      confirm_password: e.target.confirm_password.value,
+    };
+    if (obj.current_password == "" || obj.new_password == "") {
+      setPasswordError("Please fill in all fields");
+      return;
+    }
+    if (obj.current_password === obj.new_password) {
+      setPasswordError("Password and New Password must be different");
+      return;
+    }
+    if (obj.new_password !== obj.confirm_password) {
+      setPasswordError("New Password and Confirm Password must be same");
+      return;
+    }
+
+    if (passwordError == "") {
+      // api call here
+      axios
+        .post(process.env.NEXT_PUBLIC_API_URL + "/user/change-password", obj, {
+          headers: { Authorization: `Bearer ${user}` },
+        })
+        .then((res) => {
+          console.log(res.data);
+          toast.success("Password changed successfully");
+          router.refresh();
+        })
+        .catch((err) => {
+          console.log(err);
+          const errorMsg =
+            err.response?.data?._message || // API sent back an error message
+            err.message || // axios/network error message
+            "Password change failed"; // fallback
+          setPasswordError(errorMsg);
+        });
+    }
+  };
+
+  const removeError = () => {
+    setPasswordError("");
+  };
+
+  const handleLostPassword = () => {
+    axios.post(
+      process.env.NEXT_PUBLIC_API_URL + "/user/forgot-password",
+      {
+        link : "http://localhost:3000/reset-password"
+      },
+      {
+        headers: { Authorization: `Bearer ${user}` },
+      }
+    ).then((ress)=>{
+      toast.success(ress.data.message)
+    }).catch((err)=>{
+      toast.error(err.response?.data?._message || "Something went wrong")
+    })
   };
 
   const removeAuth = () => {
@@ -406,15 +494,15 @@ export default function page() {
                     >
                       <div className="">
                         <RadioGroup
-                          defaultValue={"mr"}
+                          defaultValue={details.gender }
                           className="flex items-center space-x-2"
                         >
                           <div className="flex items-center space-x-2">
-                            <RadioGroupItem value="mr" id="mr" />
+                            <input defaultChecked={details.gender === "male"} type="radio" value="male" id="mr" name="gender" />
                             <Label htmlFor="mr">Mr</Label>
                           </div>
                           <div className="flex items-center space-x-2">
-                            <RadioGroupItem value="mrs" id="mrs" />
+                            <input defaultChecked={details.gender === "female"} type="radio" value="female" id="mrs" name="gender" />
                             <Label htmlFor="mrs">Mrs</Label>
                           </div>
                         </RadioGroup>
@@ -450,7 +538,7 @@ export default function page() {
                         <Label htmlFor="address">Address</Label>
                         <Input
                           type="text"
-                          defaultValue={details.address || ""}
+                          defaultValue={details.address}
                           name="address"
                           id="address"
                         />
@@ -467,33 +555,69 @@ export default function page() {
                 {/* Change Password Form */}
                 <TabsContent value="password" className="mt-0">
                   <div className="p-6 bg-white border border-gray-200 shadow-sm rounded-lg w-full">
-                    <form action="" className="space-y-4">
+                    <form
+                      action=""
+                      onSubmit={handleChangePassword}
+                      className="space-y-4"
+                    >
                       <div className="">
-                        <Label htmlFor="old-password">Current Password</Label>
+                        <Label htmlFor="current_password">
+                          Current Password
+                        </Label>
                         <Input
+                          onChange={removeError}
                           type="password"
-                          name="old-password"
-                          id="old-password"
+                          name="current_password"
+                          id="current_password"
                         />
                       </div>
                       <div className="">
-                        <Label htmlFor="new-password">New Password</Label>
+                        <Label htmlFor="new_password">New Password</Label>
                         <Input
+                          onChange={removeError}
                           type="password"
-                          name="new-password"
-                          id="new-password"
+                          name="new_password"
+                          id="new_password"
                         />
                       </div>
                       <div className="">
-                        <Label htmlFor="confirm-password">
+                        <Label htmlFor="confirm_password">
                           Confirm Password
                         </Label>
                         <Input
+                          onChange={removeError}
                           type="password"
-                          name="confirm-password"
-                          id="confirm-password"
+                          name="confirm_password"
+                          id="confirm_password"
                         />
                       </div>
+                      {/* password error */}
+                      <div className="text-red-500">{passwordError}</div>
+
+                      {/* AlertDialog for forgot password */}
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <p className="text-[#C09578] hover:text-[#ab8468]  py-2 rounded-full mt-4 w-fit bg-transparent cursor-pointer hover:underline transition-colors">
+                            Forgot Password
+                          </p>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>Forgot Password</AlertDialogTitle>
+                            <AlertDialogDescription>
+                              This action will send a password reset link to
+                              your email.
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <AlertDialogAction onClick={handleLostPassword}>
+                              Continue
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
+
                       <Button
                         type="submit"
                         className="bg-[#C09578] hover:bg-[#ab8468] text-white px-8 py-2 rounded-full flex mt-4 justify-end"

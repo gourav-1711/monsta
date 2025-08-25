@@ -7,6 +7,7 @@ import "swiper/css/pagination";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Heart } from 'lucide-react';
+import { ProductCard } from '../ProductCard';
 
 export default function Slider2() {
   return (
@@ -37,7 +38,7 @@ export default function Slider2() {
             className="mySwiper"
           >
             <SwiperSlide>
-              <Card
+              <ProductCard
                 image={"/HomePageImgs/1608312103476Dorian Shoe Rack_.png"}
                 title="Dorian Shoe Rack"
                 price="Rs. 99"
@@ -45,7 +46,7 @@ export default function Slider2() {
               />
             </SwiperSlide>
             <SwiperSlide>
-              <Card
+              <ProductCard
                 image={
                   "/HomePageImgs/1615225341228Ganthur Sheesham Wood Sofa Set___.png"
                 }
@@ -55,7 +56,7 @@ export default function Slider2() {
               />
             </SwiperSlide>
             <SwiperSlide>
-              <Card
+              <ProductCard
                 image={"/HomePageImgs/1615277326496Sapien Sofa Cum Bed__.png"}
                 title="Sapien Sofa Cum Bed"
                 price="Rs. 99"
@@ -63,7 +64,7 @@ export default function Slider2() {
               />
             </SwiperSlide>
             <SwiperSlide>
-              <Card
+              <ProductCard
                 image={"/HomePageImgs/1617816851291Calina Swing Jhula__.png"}
                 title="Calina Swing Jhula"
                 price="Rs. 99"
@@ -71,7 +72,7 @@ export default function Slider2() {
               />
             </SwiperSlide>
             <SwiperSlide>
-              <Card
+              <ProductCard
                 image={
                   "/HomePageImgs/1617828302132Godfrey Coffee Table Set__.png"
                 }
@@ -81,7 +82,7 @@ export default function Slider2() {
               />
             </SwiperSlide>
             <SwiperSlide>
-              <Card
+              <ProductCard
                 image={
                   "/HomePageImgs/1615225341228Ganthur Sheesham Wood Sofa Set___.png"
                 }
@@ -91,7 +92,7 @@ export default function Slider2() {
               />
             </SwiperSlide>
             <SwiperSlide>
-              <Card
+              <ProductCard
                 image={
                   "/HomePageImgs/1615225341228Ganthur Sheesham Wood Sofa Set___.png"
                 }
@@ -101,7 +102,7 @@ export default function Slider2() {
               />
             </SwiperSlide>
             <SwiperSlide>
-              <Card
+              <ProductCard
                 image={"/HomePageImgs/1617828789760Rex Console Table__.png"}
                 title="Rex Console Table"
                 price="Rs. 99"
@@ -116,42 +117,4 @@ export default function Slider2() {
   )
 }
 
-
-const Card = ({ image, title, price, oldPrice }) => {
-  return (
-    <div>
-      <div className=" bg-white mb-1 shadow-lg  flex flex-col items-center pb-4">
-        <Image
-          src={image}
-          alt="Product"
-          width={180}
-          height={180}
-          className="w-full object-cover mb-4"
-        />
-        <div className="flex flex-col items-center justify-center">
-          <span className="text-xs text-black uppercase tracking-wide mb-1">
-            Nest Tables
-          </span>
-          <h2 className="text-lg font-semibold text mb-2 text-center">
-            Modern Chair
-          </h2>
-          <div className="flex items-center gap-2 mb-4">
-            <span className="text-sm line-through text-black">$149</span>
-            <span className="text-[18px] font-bold text-[#C09578] font-sans ">
-              Rs. 99
-            </span>
-          </div>
-          <div className="flex items-center gap-2 mb-4">
-            <Button className="w-full rounded-[0px] bg-gray-200 text-black hover:bg-[#C09578] ">
-              <Heart />
-            </Button>
-            <Button className="w-full rounded-[0px] bg-gray-200 text-black hover:bg-[#C09578] ">
-              Add to Cart
-            </Button>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-};
 

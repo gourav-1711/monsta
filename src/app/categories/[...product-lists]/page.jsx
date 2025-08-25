@@ -27,6 +27,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { addToCart } from "../../(redux)/features/cart/cart";
 import { addToWishlist } from "../../(redux)/features/wishlist/wishlist";
 import { toast } from "sonner";
+import { ProductCard } from "@/app/comman/ProductCard";
+import axios from "axios";
 export default function page() {
   const {
     tables,
@@ -62,38 +64,47 @@ export default function page() {
     },
   ];
 
+  // product data
+  const [productData, setProductData] = useState([]);
+
   // const [tabData, setTabData] = useState(dummyData);
   const [activeTab, setActiveTab] = useState("featured");
-  const [priceRange, setPriceRange] = useState([0, 10000000]);
+  const [priceRange, setPriceRange] = useState([0, 1000000]);
 
-  console.log(priceRange);
-
-  const tabings = (tab) => {
-    setActiveTab(tab);
-  };
+  useEffect(() => {
+    axios
+      .post(`${process.env.NEXT_PUBLIC_API_URL}/products`)
+      .then((res) => {
+        setProductData(res.data._data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, []);
+  console.log(productData);
 
   return (
     <div>
       <div className="max-w-[1100px] mx-auto">
         {/* Breadcrumb */}
         <div className="mt-[15px]  p-[35px_0px] border-t border-t-gray-200 border-b border-gray-200 text-center">
-        <h1 className="text-[32px] font-bold mb-[5px] font-serif text">
-          Categories
-        </h1>
-        <Breadcrumb>
-          <BreadcrumbList  className="justify-center font-semibold" >
-            <BreadcrumbItem className="text-center text-black">
-              <BreadcrumbLink href="/">Home</BreadcrumbLink>
-            </BreadcrumbItem>
-            <BreadcrumbSeparator />
-            <BreadcrumbItem className="text-center">
-              <BreadcrumbLink className=" text-[#C09578]" href="/categories">
-                Categories
-              </BreadcrumbLink>
-            </BreadcrumbItem>         
-          </BreadcrumbList>
-        </Breadcrumb>
-      </div>
+          <h1 className="text-[32px] font-bold mb-[5px] font-serif text">
+            Categories
+          </h1>
+          <Breadcrumb>
+            <BreadcrumbList className="justify-center font-semibold">
+              <BreadcrumbItem className="text-center text-black">
+                <BreadcrumbLink href="/">Home</BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator />
+              <BreadcrumbItem className="text-center">
+                <BreadcrumbLink className=" text-[#C09578]" href="/categories">
+                  Categories
+                </BreadcrumbLink>
+              </BreadcrumbItem>
+            </BreadcrumbList>
+          </Breadcrumb>
+        </div>
 
         <div className="grid md:grid-cols-[20%_auto] grid-cols-1 mt-[30px] ">
           <div className=" order-2 md:order-1 px-8 md:px-0">
@@ -351,7 +362,7 @@ export default function page() {
             <div className="flex justify-end items-center border px-3 gap-4 border-gray-200 py-2">
               <div className=" flex items-center gap-2 justify-end   text-center mt-[10px]">
                 <span>Sort By :</span>
-                <DropdownMenu > 
+                <DropdownMenu>
                   <DropdownMenuTrigger className="flex items-center gap-2 border border-gray-200 px-2 py-1 rounded-md outline-none">
                     <span>Sort By</span>
                   </DropdownMenuTrigger>
@@ -371,19 +382,8 @@ export default function page() {
             </div>
 
             <div className="grid lg:grid-cols-3 grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-[20px] max-w-[1450px] mx-auto p-[20px_50px]">
-              {dummyData.map((v) => {
-                return (
-                  <Card
-                    key={v.id}
-                    image={v.image}
-                    title={v.title}
-                    price={v.price}
-                    oldPrice={v.originalPrice}
-                    category={v.category}
-                    quantity={v.quantity}
-                    id={v.id}
-                  />
-                );
+              {productData.map((v) => {
+                return <ProductCard key={v._id} data={v} />;
               })}
             </div>
           </div>
@@ -392,70 +392,3 @@ export default function page() {
     </div>
   );
 }
-
-const Card = ({ image, title, price, oldPrice, category, quantity, id }) => {
-  const dispatch = useDispatch()
-
-  const cartItems = useSelector(state => state.cart.cartItems)
-
-  const cartObject = {
-    id: id,
-    image: image,
-    title: title,
-    price: price,
-    oldPrice: oldPrice,
-    quantity: quantity,
-  }
-
-  const addItem = () => {
-   const check = cartItems.some(item => item.id == cartObject.id)
-   if(check){
-    dispatch(addToCart(cartObject))
-    toast.success("Item quantity increased")
-   }
-   else{
-    dispatch(addToCart(cartObject))
-    toast.success("Item added to cart")
-   }
-  }
-
-  return (
-    <div>
-      <div className=" bg-white shadow-lg  flex flex-col items-center pb-4">
-        <Link className="w-full" href={`/product-details/${title}`}>
-        <Image
-          src={image}
-          alt="Product"
-          width={180}
-          height={180}
-          className="w-full object-cover mb-4"
-        />
-        </Link>
-        <div className="flex flex-col items-center justify-center">
-          <span className="text-xs text-black uppercase tracking-wide mb-1">
-            {category}
-          </span>
-          <h2 className="text-lg font-semibold text mb-2 text-center">
-            {title}
-          </h2>
-          <div className="flex items-center gap-2 mb-4">
-            <span className="text-sm line-through text-black">{oldPrice}</span>
-            <span className="text-[18px] font-bold text-[#C09578] font-sans ">
-              Rs. {price}
-            </span>
-          </div>
-          <div className="flex items-center gap-2 mb-4">
-            <Button 
-            onClick={() => dispatch(addToWishlist(cartObject))}
-            className="w-full rounded-[0px] bg-gray-200 text-black hover:bg-[#C09578] ">
-              <Heart />
-            </Button>
-            <Button onClick={ addItem} className="w-full rounded-[0px] bg-gray-200 text-black hover:bg-[#C09578] ">
-              Add to Cart
-            </Button>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-};

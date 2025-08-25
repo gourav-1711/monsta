@@ -7,6 +7,17 @@ import {
   BreadcrumbList,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -15,17 +26,22 @@ import { useState } from "react";
 import axios from "axios";
 import { toast } from "sonner";
 import { useDispatch } from "react-redux";
-import { fetchProfile, login , register } from "../(redux)/features/auth/auth";
-import { usePathname, useRouter } from "next/navigation";
+import { fetchProfile, login, register } from "../(redux)/features/auth/auth";
+import {  useRouter } from "next/navigation";
 
 export default function page() {
   const [loginError, setLoginError] = useState("");
   const [registerError, setRegisterError] = useState("");
+  const [forgotPassEmail, setForgotPassEmail] = useState("");
   // redux here
   const dispatch = useDispatch();
 
+  // user token
+
   // navigation
-  const navigation = useRouter()
+  const navigation = useRouter();
+
+
 
   const handleLogin = (e) => {
     e.preventDefault();
@@ -45,25 +61,23 @@ export default function page() {
       return;
     }
 
-    axios.post(process.env.NEXT_PUBLIC_API_URL + "/user/login", {
-      email,
-      password,
-    })
-    .then((res) => {
-      console.log(res.data);
-      toast.success("User logged in successfully");
-      dispatch(login(res.data.token));
-      dispatch(fetchProfile());
-      navigation.push("/my-dashboard")
-    })
-    .catch((err) => {
-      console.log(err);
-      toast.error("User login failed");
-      setLoginError(err.response.data.message);
-      
-    });
+    axios
+      .post(process.env.NEXT_PUBLIC_API_URL + "/user/login", {
+        email,
+        password,
+      })
+      .then((res) => {
+        toast.success("User logged in successfully");
+        dispatch(login(res.data._token));
+        dispatch(fetchProfile());
+        navigation.push("/my-dashboard");
+      })
+      .catch((err) => {
+        console.log(err);
+        toast.error("User login failed");
+        setLoginError(err.response.data._message);
+      });
   };
-  // console.log(process.env.NEXT_PUBLIC_API_URL);
 
   const handleRegister = (e) => {
     e.preventDefault();
@@ -100,18 +114,39 @@ export default function page() {
           mobile,
         })
         .then((res) => {
-          console.log(res.data);
+         
           toast.success("User registered successfully");
-          dispatch(register(res.data.token));
+          dispatch(register(res.data._token));
           dispatch(fetchProfile());
-          navigation.push("/my-dashboard")
+          navigation.push("/my-dashboard");
         })
         .catch((err) => {
           console.log(err);
           toast.error("User registration failed");
-          setRegisterError(err.response.data.message);
+          setRegisterError(err.response.data._message);
         });
     }
+  };
+
+  const handleLostPassword = () => {
+    if(forgotPassEmail == ""){
+      toast.error("Please fill email");
+      return;
+    }
+    axios
+      .post(
+        process.env.NEXT_PUBLIC_API_URL + "/user/forgot-password",
+        {
+          link: "http://localhost:3000/reset-password",
+          email: forgotPassEmail,
+        }
+      )
+      .then((ress) => {
+        toast.success(ress.data._message);
+      })
+      .catch((err) => {
+        toast.error(err.response?.data?._message || "Something went wrong");
+      });
   };
 
   return (
@@ -178,9 +213,39 @@ export default function page() {
                     <p className="text-red-500 text-sm">{loginError}</p>
                   )}
                   <div className="flex items-center justify-between">
-                    <a href="#" className="text-[#C09578] hover:underline">
-                      Lost your password?
-                    </a>
+                    {/* AlertDialog for forgot password */}
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <p className="text-[#C09578] hover:text-[#ab8468]  py-2 rounded-full mt-4 w-fit bg-transparent cursor-pointer hover:underline transition-colors">
+                          Forgot Password
+                        </p>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>Forgot Password</AlertDialogTitle>
+                          <AlertDialogDescription>
+                            This action will send a password reset link to your
+                            email.
+                            <Input
+                              value={forgotPassEmail}
+                              onChange={(e) =>
+                                setForgotPassEmail(e.target.value)
+                              }
+                              type="email"
+                              id="email"
+                              placeholder="Email Address"
+                              className="w-full p-3"
+                            />
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Cancel</AlertDialogCancel>
+                          <AlertDialogAction disabled={forgotPassEmail == ""} onClick={handleLostPassword}>
+                            Continue
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
                     <Button
                       type="submit"
                       className="bg-[#C09578] hover:bg-[#ab8468] text-white px-8 py-2 rounded-full"

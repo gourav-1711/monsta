@@ -5,7 +5,7 @@ import BestSelling from "@/app/comman/BestSelling";
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, FreeMode } from 'swiper/modules';
 import styles from './ProductDetails.module.css';
-import ImageZoom from "@/app/zoom/ImageZoom";
+import ImageZoom from "@/app/comman/zoom/ImageZoom";
 
 // Import Swiper styles
 import 'swiper/css';
